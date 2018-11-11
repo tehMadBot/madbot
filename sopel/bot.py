@@ -319,27 +319,6 @@ class Sopel(irc.Bot):
 
             recipient_id = Identifier(recipient)
 
-            if recipient_id not in self.stack:
-                self.stack[recipient_id] = []
-            elif self.stack[recipient_id]:
-                elapsed = time.time() - self.stack[recipient_id][-1][0]
-                if elapsed < 3:
-                    penalty = float(max(0, len(text) - 40)) / 70
-                    wait = 0.8 + penalty
-                    if elapsed < wait:
-                        time.sleep(wait - elapsed)
-
-                # Loop detection
-                messages = [m[1] for m in self.stack[recipient_id][-8:]]
-
-                # If what we about to send repeated at least 5 times in the
-                # last 2 minutes, replace with '...'
-                if messages.count(text) >= 5 and elapsed < 120:
-                    text = '...'
-                    if messages.count('...') >= 3:
-                        # If we said '...' 3 times, discard message
-                        return
-
             self.write(('PRIVMSG', recipient), text)
             self.stack[recipient_id].append((time.time(), self.safe(text)))
             self.stack[recipient_id] = self.stack[recipient_id][-10:]
