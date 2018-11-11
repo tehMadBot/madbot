@@ -320,7 +320,6 @@ class Sopel(irc.Bot):
             recipient_id = Identifier(recipient)
 
             self.write(('PRIVMSG', recipient), text)
-            self.stack[recipient_id] = self.stack[recipient_id][-10:]
         finally:
             self.sending.release()
         # Now that we've sent the first part, we need to send the rest. Doing
